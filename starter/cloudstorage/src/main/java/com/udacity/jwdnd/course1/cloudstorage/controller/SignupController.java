@@ -20,12 +20,12 @@ public class SignupController {
     }
 
     @GetMapping
-    public String signupView() {
+    public String signupView(@ModelAttribute("User") User user, Model model) {
         return "signup";
     }
 
     @PostMapping()
-    public String signupUser(@ModelAttribute User user, Model model, RedirectAttributes redirectAttrs) {
+    public String signupUser(@ModelAttribute("User") User user, Model model, RedirectAttributes redirectAttrs) {
         String signupError = null;
         if (!userService.isUsernameAvailable(user.getUsername())) {
             signupError = "The username already exists!";
