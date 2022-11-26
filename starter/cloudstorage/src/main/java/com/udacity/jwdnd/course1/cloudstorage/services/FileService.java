@@ -17,6 +17,10 @@ public class FileService {
         return fileMapper.insert(file);
     }
 
+    public boolean existsFilename(String filename) {
+        return fileMapper.existsFilename(filename) != null;
+    }
+
     public List<File> getFilesForUser(Integer userId){
         return fileMapper.getFileListByUserId(userId);
     }
