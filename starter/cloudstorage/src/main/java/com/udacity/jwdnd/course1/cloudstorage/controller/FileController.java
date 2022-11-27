@@ -3,6 +3,7 @@ package com.udacity.jwdnd.course1.cloudstorage.controller;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.io.IOException;
+import java.util.Objects;
 
 @Controller
 @RequestMapping({"/file"})
@@ -24,7 +28,7 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public String uploadFile(@RequestParam("file") MultipartFile file, RedirectAttributes attributes) {
+    public String uploadFile(@RequestParam("file") MultipartFile file, RedirectAttributes attributes) throws IOException {
         // check if file is empty
         if (file.isEmpty()) {
             attributes.addFlashAttribute("message", "Please select a file to upload.");
@@ -37,18 +41,23 @@ public class FileController {
         }
 
         // normalize the file path
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
 
         if (fileService.existsFilename(fileName)) {
             attributes.addFlashAttribute("warning", "The file \"" + fileName + "\" already exists!");
             return "redirect:/home";
         }
 
-        Integer userId = userService.getUserId();
-        File file = new File(fileName, fileUpload.getContentType(), String.valueOf(fileUpload.getSize()), userId, fileUpload.getBytes());
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        fileService.createFiles(file);
+        Integer userId = userService.getUser(username).getUserId();
+        File fileUpload = new File(fileName, file.getContentType(), String.valueOf(file.getSize()), userId, file.getBytes());
 
+        fileService.insertFile(fileUpload);
+
+        attributes.addFlashAttribute("message", "You successfully uploaded " + fileName + '!');
+
+        return "redirect:/home";
 
 
     }
