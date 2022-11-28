@@ -52,9 +52,7 @@ public class FileController {
         String file_err = null;
 
         try {
-            String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-            Integer userId = userService.getUser(username).getUserId();
+            Integer userId = userService.getLoggedInUserId();
             File fileUpload = new File(fileName, file.getContentType(), String.valueOf(file.getSize()), userId, file.getBytes());
 
             fileService.insertFile(fileUpload);
