@@ -25,7 +25,7 @@
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
-                        <form action="#" th:action="@{/upload}" enctype="multipart/form-data" method="POST">
+                        <form action="#" th:action="@{/file/upload}" enctype="multipart/form-data" method="POST">
                             <div class="container">
                                 <div class="row" style="margin: 1em;">
                                     <div class="col-sm-2">
@@ -40,6 +40,12 @@
                                 </div>
                             </div>
                         </form>
+                        <div id="error-msg" th:if="${uploaderror}" class="alert alert-danger">
+                            <span th:text="${uploaderror}"></span>
+                        </div>
+                        <div id="success-msg" th:if="${uploadsuccess}" class="alert alert-dark">
+                            <span th:text="${uploadsuccess}"></span>
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-striped" id="fileTable">
                                 <thead>
