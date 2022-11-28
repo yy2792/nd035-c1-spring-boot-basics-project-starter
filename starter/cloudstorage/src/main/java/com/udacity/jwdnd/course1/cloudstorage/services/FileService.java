@@ -33,4 +33,9 @@ public class FileService {
         return getFilesByUserId(userService.getLoggedInUserId());
     }
 
+    public boolean deleteFiles(Integer fileId) {
+        return fileMapper.delete(fileId);
+    }
+
+
 }

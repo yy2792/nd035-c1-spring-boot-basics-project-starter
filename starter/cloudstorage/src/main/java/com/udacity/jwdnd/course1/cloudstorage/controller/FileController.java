@@ -8,9 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -80,7 +78,15 @@ public class FileController {
 
     }
 
+    @GetMapping("/delete/{fileId}")
+    public String deleteFile(@PathVariable("fileId") Integer fileId, RedirectAttributes redirectAttrs) {
 
+        if (!fileService.deleteFiles(fileId)) {
+            String errorMessage = "An error occurred while deleting the file!";
+            logger.error(errorMessage);
+            redirectAttrs.addFlashAttribute("error", errorMessage);
+        }
 
-
+        return "redirect:/home";
+    }
 }
