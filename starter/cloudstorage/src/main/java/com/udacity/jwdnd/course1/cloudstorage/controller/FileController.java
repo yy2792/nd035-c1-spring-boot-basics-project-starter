@@ -5,6 +5,8 @@ import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -88,5 +90,11 @@ public class FileController {
         }
 
         return "redirect:/home";
+    }
+
+    @GetMapping("/download/{fileId}")
+    public ResponseEntity<byte[]> getFile(@PathVariable("fileId") Integer fileId) {
+        File file = fileService.getFileByFileId(fileId);
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file.getFiledata());
     }
 }
