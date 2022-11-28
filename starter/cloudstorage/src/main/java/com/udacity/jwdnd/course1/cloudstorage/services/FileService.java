@@ -10,9 +10,11 @@ import java.util.List;
 public class FileService {
 
     private FileMapper fileMapper;
+    private UserService userService;
 
-    public FileService(FileMapper fileMapper) {
+    public FileService(FileMapper fileMapper, UserService userService) {
         this.fileMapper = fileMapper;
+        this.userService = userService;
     }
 
     public Integer insertFile(File file){
@@ -23,9 +25,12 @@ public class FileService {
         return fileMapper.existsFilename(filename) != null;
     }
 
-    public List<File> getFilesForUser(Integer userId){
+    public List<File> getFilesByUserId(Integer userId){
         return fileMapper.getFileListByUserId(userId);
     }
 
+    public List<File> getFileListByLoggedInUserId() {
+        return getFilesByUserId(userService.getLoggedInUserId());
+    }
 
 }
