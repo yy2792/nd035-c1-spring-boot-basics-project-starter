@@ -17,6 +17,10 @@ public class FileService {
         this.userService = userService;
     }
 
+    public File getFileByFileId(Integer fileId) {
+        return fileMapper.getFileByFileId(fileId);
+    }
+
     public Integer insertFile(File file){
         return fileMapper.insert(file);
     }
