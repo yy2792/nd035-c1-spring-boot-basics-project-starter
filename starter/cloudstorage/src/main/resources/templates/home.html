@@ -156,7 +156,7 @@
                                         <button id="editCredential"
                                                 th:onclick="showCredentialModal([[${credential.credentialId}]],[[${credential.url}]],
                                                                              [[${credential.username}]],
-                                                                             [[${credentialService.getDecryptedPassword(credential)}]])"
+                                                                             [[${@credentialService?.getDecryptedPassword(credential)}]])"
                                                 type="button" class="btn btn-success"> Edit
                                         </button>
                                         <a id="deleteCredentials"
