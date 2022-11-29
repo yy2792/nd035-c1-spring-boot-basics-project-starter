@@ -243,6 +243,69 @@ class CloudStorageApplicationTests {
 		Assertions.assertTrue(driver.getPageSource().contains("Description1"));
 	}
 
+	@Test
+	public void editNotes() {
+		try {
+			addNotes();
+
+			// Create notes
+			WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+
+			WebElement noteTab = driver.findElement(By.id("nav-notes-tab"));
+			noteTab.click();
+
+			Thread.sleep(500);
+
+			WebElement editNotes = driver.findElement(By.id("editNotes"));
+			editNotes.click();
+
+			webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-title")));
+			WebElement noteTitle = driver.findElement(By.id("note-title"));
+			noteTitle.clear();
+			noteTitle.sendKeys("Title2");
+
+			webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-description")));
+			WebElement noteDescription = driver.findElement(By.id("note-description"));
+			noteDescription.clear();
+			noteDescription.sendKeys("Description2");
+
+
+			WebElement saveNotes = driver.findElement(By.id("saveNotes"));
+			saveNotes.click();
+
+			// Redirect home page
+			driver.get("http://localhost:" + this.port + "/home");
+
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Delete notes
+	 */
+	@Test
+	public void deleteNotes() {
+		try {
+			// Create notes
+			addNotes();
+
+			WebElement noteTab = driver.findElement(By.id("nav-notes-tab"));
+			noteTab.click();
+
+			Thread.sleep(500);
+
+			WebElement deleteNotes = driver.findElement(By.id("deleteNotes"));
+			deleteNotes.click();
+
+			// Redirect home page
+			driver.get("http://localhost:" + this.port + "/home");
+
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 
 
 }
