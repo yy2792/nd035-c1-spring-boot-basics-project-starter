@@ -176,7 +176,7 @@ class CloudStorageApplicationTests {
 	 * https://spring.io/guides/gs/uploading-files/ under the "Tuning File Upload Limits" section.
 	 */
 	@Test
-	public void testLargeUpload() {
+	public void testLargeUpload() throws Exception {
 		// Create a test account
 		doMockSignUp("Large File","Test","LFT","123");
 		doLogIn("LFT", "123");
@@ -192,12 +192,55 @@ class CloudStorageApplicationTests {
 		WebElement uploadButton = driver.findElement(By.id("uploadButton"));
 		uploadButton.click();
 		try {
-			webDriverWait.until(ExpectedConditions.presenceOfElementLocated(By.id("success")));
+			webDriverWait.until(ExpectedConditions.presenceOfElementLocated(By.id("success-msg")));
 		} catch (org.openqa.selenium.TimeoutException e) {
 			System.out.println("Large File upload failed");
+			throw new Exception("Large File upload failed");
 		}
 		Assertions.assertFalse(driver.getPageSource().contains("HTTP Status 403 – Forbidden"));
 
+	}
+
+	@Test
+	public void addNotes() {
+		try {
+			// Create a test account
+			doMockSignUp("Large Note", "Test", "LNT", "123");
+			doLogIn("LNT", "123");
+
+			// Create notes
+			WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+
+			WebElement noteTab = driver.findElement(By.id("nav-notes-tab"));
+			noteTab.click();
+
+			Thread.sleep(500);
+
+			WebElement showNotes = driver.findElement(By.id("showNotes"));
+			showNotes.click();
+
+			webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-title")));
+			WebElement noteTitle = driver.findElement(By.id("note-title"));
+			noteTitle.click();
+			noteTitle.sendKeys("Title1");
+
+			webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-description")));
+			WebElement noteDescription = driver.findElement(By.id("note-description"));
+			noteDescription.click();
+			noteDescription.sendKeys("Description1");
+
+
+			WebElement noteButton = driver.findElement(By.id("saveNotes"));
+			noteButton.click();
+
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+
+		WebElement noteTab = driver.findElement(By.id("nav-notes-tab"));
+		noteTab.click();
+
+		Assertions.assertTrue(driver.getPageSource().contains("Description1"));
 	}
 
 
