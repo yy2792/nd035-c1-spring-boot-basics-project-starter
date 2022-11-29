@@ -18,6 +18,6 @@ public interface NoteMapper {
     Integer updateNote(Note note);
 
     @Delete("DELETE FROM NOTES WHERE noteid=#{noteid}")
-    Integer deleteNote(Integer noteid);
+    boolean deleteNote(Integer noteid);
 
 }

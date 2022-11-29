@@ -38,4 +38,8 @@ public class NoteService {
         return getNotesByUserId(userService.getLoggedInUserId());
     }
 
+    public boolean deleteNote(Integer noteId) {
+        return noteMapper.deleteNote(noteId);
+    }
+
 }

@@ -5,9 +5,7 @@ import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -49,5 +47,14 @@ public class NoteController {
 
     }
 
+    @GetMapping("/delete/{noteid}")
+    public String deleteNotes(@PathVariable("noteid") Integer noteId, RedirectAttributes redirectAttrs) {
+
+        if (!noteService.deleteNote(noteId)) {
+            redirectAttrs.addFlashAttribute("error", "An error occurred while deleting the note!");
+        }
+
+        return "redirect:/home";
+    }
 
 }
