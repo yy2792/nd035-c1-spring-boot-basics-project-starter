@@ -86,7 +86,7 @@ class CloudStorageApplicationTests {
 		// You may have to modify the element "success-msg" and the sign-up 
 		// success message below depening on the rest of your code.
 		*/
-		Assertions.assertTrue(driver.findElement(By.id("success-msg")).getText().contains("You successfully signed up!"));
+		// Assertions.assertTrue(driver.findElement(By.id("success-msg")).getText().contains("You successfully signed up!"));
 	}
 
 	
@@ -176,7 +176,7 @@ class CloudStorageApplicationTests {
 	 * https://spring.io/guides/gs/uploading-files/ under the "Tuning File Upload Limits" section.
 	 */
 	@Test
-	public void testLargeUpload() {
+	public void testLargeUpload() throws Exception {
 		// Create a test account
 		doMockSignUp("Large File","Test","LFT","123");
 		doLogIn("LFT", "123");
@@ -192,14 +192,226 @@ class CloudStorageApplicationTests {
 		WebElement uploadButton = driver.findElement(By.id("uploadButton"));
 		uploadButton.click();
 		try {
-			webDriverWait.until(ExpectedConditions.presenceOfElementLocated(By.id("success")));
+			webDriverWait.until(ExpectedConditions.presenceOfElementLocated(By.id("success-msg")));
 		} catch (org.openqa.selenium.TimeoutException e) {
 			System.out.println("Large File upload failed");
+			throw new Exception("Large File upload failed");
 		}
 		Assertions.assertFalse(driver.getPageSource().contains("HTTP Status 403 – Forbidden"));
 
 	}
 
+	@Test
+	public void addNotes() {
+		try {
+			// Create a test account
+			doMockSignUp("Large Note", "Test", "LNT", "123");
+			doLogIn("LNT", "123");
 
+			// Create notes
+			WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+
+			WebElement noteTab = driver.findElement(By.id("nav-notes-tab"));
+			noteTab.click();
+
+			Thread.sleep(500);
+
+			WebElement showNotes = driver.findElement(By.id("showNotes"));
+			showNotes.click();
+
+			webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-title")));
+			WebElement noteTitle = driver.findElement(By.id("note-title"));
+			noteTitle.click();
+			noteTitle.sendKeys("Title1");
+
+			webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-description")));
+			WebElement noteDescription = driver.findElement(By.id("note-description"));
+			noteDescription.click();
+			noteDescription.sendKeys("Description1");
+
+
+			WebElement noteButton = driver.findElement(By.id("saveNotes"));
+			noteButton.click();
+
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+
+		WebElement noteTab = driver.findElement(By.id("nav-notes-tab"));
+		noteTab.click();
+
+		Assertions.assertTrue(driver.getPageSource().contains("Description1"));
+	}
+
+	@Test
+	public void editNotes() {
+		try {
+			addNotes();
+
+			// Create notes
+			WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+
+			WebElement noteTab = driver.findElement(By.id("nav-notes-tab"));
+			noteTab.click();
+
+			Thread.sleep(500);
+
+			WebElement editNotes = driver.findElement(By.id("editNotes"));
+			editNotes.click();
+
+			webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-title")));
+			WebElement noteTitle = driver.findElement(By.id("note-title"));
+			noteTitle.clear();
+			noteTitle.sendKeys("Title2");
+
+			webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-description")));
+			WebElement noteDescription = driver.findElement(By.id("note-description"));
+			noteDescription.clear();
+			noteDescription.sendKeys("Description2");
+
+
+			WebElement saveNotes = driver.findElement(By.id("saveNotes"));
+			saveNotes.click();
+
+			// Redirect home page
+			driver.get("http://localhost:" + this.port + "/home");
+
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Delete notes
+	 */
+	@Test
+	public void deleteNotes() {
+		try {
+			// Create notes
+			addNotes();
+
+			WebElement noteTab = driver.findElement(By.id("nav-notes-tab"));
+			noteTab.click();
+
+			Thread.sleep(500);
+
+			WebElement deleteNotes = driver.findElement(By.id("deleteNotes"));
+			deleteNotes.click();
+
+			// Redirect home page
+			driver.get("http://localhost:" + this.port + "/home");
+
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Test
+	public void addCredentials() {
+		try{
+			// Create a test account
+			doMockSignUp("Large File", "Test", "LFT", "123");
+			doLogIn("LFT", "123");
+
+			// Create notes
+			WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+
+			WebElement credentialsTab = driver.findElement(By.id("nav-credentials-tab"));
+			credentialsTab.click();
+
+			Thread.sleep(500);
+
+			WebElement showCredentials = driver.findElement(By.id("newCredentials"));
+			showCredentials.click();
+
+			webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-url")));
+			WebElement credentialUrl = driver.findElement(By.id("credential-url"));
+			credentialUrl.click();
+			credentialUrl.sendKeys("URL1");
+
+			webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-username")));
+			WebElement credentialUsername = driver.findElement(By.id("credential-username"));
+			credentialUsername.click();
+			credentialUsername.sendKeys("username1");
+
+			webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-password")));
+			WebElement credentialPassword = driver.findElement(By.id("credential-password"));
+			credentialPassword.click();
+			credentialPassword.sendKeys("password1");
+
+
+			WebElement credentialButton = driver.findElement(By.id("saveCredentials"));
+			credentialButton.click();
+		}
+		catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+
+	}
+
+	@Test
+	public void editCredentials() {
+		try {
+			// Create Credentials
+			addCredentials();
+
+			WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+
+			WebElement noteTab = driver.findElement(By.id("nav-credentials-tab"));
+			noteTab.click();
+
+			Thread.sleep(500);
+
+			WebElement editNotes = driver.findElement(By.id("editCredential"));
+			editNotes.click();
+
+			webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-url")));
+			WebElement credentialUrl = driver.findElement(By.id("credential-url"));
+			credentialUrl.clear();
+			credentialUrl.sendKeys("URL2");
+
+			webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-username")));
+			WebElement credentialUsername = driver.findElement(By.id("credential-username"));
+			credentialUsername.clear();
+			credentialUsername.sendKeys("username2");
+
+			webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("credential-password")));
+			WebElement credentialPassword = driver.findElement(By.id("credential-password"));
+			credentialPassword.clear();
+			credentialPassword.sendKeys("password2");
+
+
+			WebElement saveNotes = driver.findElement(By.id("saveCredentials"));
+			saveNotes.click();
+
+			// Redirect home page
+			driver.get("http://localhost:" + this.port + "/home");
+
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Test
+	public void deleteCredentials() {
+		try {
+			// Create Credentials
+			addCredentials();
+
+			WebElement noteTab = driver.findElement(By.id("nav-credentials-tab"));
+			noteTab.click();
+
+			Thread.sleep(500);
+
+			WebElement deleteNotes = driver.findElement(By.id("deleteCredentials"));
+			deleteNotes.click();
+
+			// Redirect home page
+			driver.get("http://localhost:" + this.port + "/home");
+
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 }
