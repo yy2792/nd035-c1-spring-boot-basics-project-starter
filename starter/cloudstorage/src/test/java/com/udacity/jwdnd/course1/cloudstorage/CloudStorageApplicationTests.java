@@ -392,4 +392,26 @@ class CloudStorageApplicationTests {
 		}
 	}
 
+	@Test
+	public void deleteCredentials() {
+		try {
+			// Create Credentials
+			addCredentials();
+
+			WebElement noteTab = driver.findElement(By.id("nav-credentials-tab"));
+			noteTab.click();
+
+			Thread.sleep(500);
+
+			WebElement deleteNotes = driver.findElement(By.id("deleteCredentials"));
+			deleteNotes.click();
+
+			// Redirect home page
+			driver.get("http://localhost:" + this.port + "/home");
+
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 }
