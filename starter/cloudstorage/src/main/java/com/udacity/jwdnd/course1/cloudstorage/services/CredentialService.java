@@ -35,7 +35,7 @@ public class CredentialService {
     }
 
     public Boolean updateCredential(Credential credential){
-        String encodedKey = credential.getKey();
+        String encodedKey = generateEncodedKey();
         encryptPassword(credential, encodedKey);
         return credentialsMapper.update(credential);
     }
